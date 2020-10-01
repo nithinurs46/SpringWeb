@@ -10,3 +10,5 @@ User is allowed to associate a role and each role as privileges which can be ass
 User edit and deletion operation is allowed only if the user has the required privileges. This is done using spring security.
 
 Password hashing is used to store the password.
+
+JUnit is provided with few scenarios.
