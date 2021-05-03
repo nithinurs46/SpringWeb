@@ -95,7 +95,7 @@ class SpringWebApplicationTests {
 		user1.setUserId("NU");
 
 		User user2 = new User();
-		user2.setUserId("HK");
+		user2.setUserId("AB");
 
 		List<User> usersList = new ArrayList<User>();
 		usersList.add(user1);
@@ -106,7 +106,7 @@ class SpringWebApplicationTests {
 		mockMvc.perform(get("/showUsers")).andExpect(status().isOk()).andExpect(view().name("users"))
 				// .andExpect(model().attribute("usersList", hasSize(6)))
 				.andExpect(model().attribute("usersList", hasItem(allOf(hasProperty("userId", is("NU"))))))
-				.andExpect(model().attribute("usersList", hasItem(allOf(hasProperty("userId", is("HK"))))));
+				.andExpect(model().attribute("usersList", hasItem(allOf(hasProperty("userId", is("AB"))))));
 
 		verifyNoMoreInteractions(userSvc);
 
