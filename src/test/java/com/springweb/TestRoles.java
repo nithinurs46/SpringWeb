@@ -31,28 +31,28 @@ public class TestRoles {
 	@Test
 	public void testGetAllRoles() {
 		List<Role> roles = new ArrayList<Role>();
-		Role role1 = new Role();
-		role1.setRoleName("Role-Name-1");
-		role1.setDeleteUserPriv("1");
-		role1.setImportPriv("1");
-		role1.setUpdateUserPriv("0");
 		User user1 = new User();
 		user1.setUserId("A");
 		user1.setAddress1("Address1");
 		user1.setAddress2("Address2");
 		user1.setCity("City11");
+		Role role1 = new Role();
+		role1.setRoleName("Role-Name-1");
+		role1.setDeleteUserPriv("1");
+		role1.setImportPriv("1");
+		role1.setUpdateUserPriv("0");
 		role1.setUser(user1);
 
-		Role role2 = new Role();
-		role2.setRoleName("Role-Name-2");
-		role2.setDeleteUserPriv("0");
-		role2.setImportPriv("0");
-		role2.setUpdateUserPriv("1");
 		User user2 = new User();
 		user2.setUserId("AB");
 		user2.setAddress1("Address11");
 		user2.setAddress2("Address22");
 		user2.setCity("City21");
+		Role role2 = new Role();
+		role2.setRoleName("Role-Name-2");
+		role2.setDeleteUserPriv("0");
+		role2.setImportPriv("0");
+		role2.setUpdateUserPriv("1");
 		role2.setUser(user2);
 
 		roles.add(role1);
