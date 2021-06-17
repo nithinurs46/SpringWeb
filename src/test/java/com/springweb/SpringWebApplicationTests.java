@@ -14,7 +14,7 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -43,7 +43,7 @@ class SpringWebApplicationTests {
 
 	ObjectMapper om = new ObjectMapper();
 
-	@Mock
+	@MockBean
 	UserSvc userSvc;
 
 	@BeforeAll
@@ -62,33 +62,20 @@ class SpringWebApplicationTests {
 		System.out.println("**Clean Up**");
 	}
 
-	@Test
-	@DisplayName("Unit test for login")
-	@Order(1)
-	public void testLogin() throws Exception {
-		LoginForm form = new LoginForm();
-		form.setUserId("NU");
-		form.setPassword("Password1");
-		mockMvc.perform(post("/validateLogin").contentType(MediaType.APPLICATION_FORM_URLENCODED).param("userId", "NU")
-				.param("password", "Password1").sessionAttr("esm", new LoginForm()))
-
-				.andExpect(status().isFound()).andExpect(view().name("redirect:/displayHomePage"));
-
-	}
 
 	@Test
 	@DisplayName("Unit test for creating new user")
-	@Order(2)
+	@Order(1)
 	public void testCreateUser() throws Exception {
-		mockMvc.perform(post("/addUser").param("userId", "NEW4").param("password", "Password1"))
-				.andExpect(status().isOk()).andExpect(view().name("registration"));
+		
+		mockMvc.perform(post("/saveUser?opType=add"))
+				.andExpect(status().isOk()).andExpect(view().name("users"));
 
-		verifyNoMoreInteractions(userSvc);
 	}
 
 	@Test
 	@DisplayName("Unit test for retreiving all users")
-	@Order(3)
+	@Order(2)
 	public void testGetAllUsers() throws Exception {
 
 		User user1 = new User();
@@ -108,27 +95,31 @@ class SpringWebApplicationTests {
 				.andExpect(model().attribute("usersList", hasItem(allOf(hasProperty("userId", is("NU"))))))
 				.andExpect(model().attribute("usersList", hasItem(allOf(hasProperty("userId", is("AB"))))));
 
-		verifyNoMoreInteractions(userSvc);
-
 	}
 
 	@Test
 	@DisplayName("Unit test for retreiving specific user")
-	@Order(4)
+	@Order(3)
 	public void getUser() throws Exception {
 		// when(userSvc.getUser("DD")).thenThrow(new UserNotFoundException());
 
 		// when user is present
+		User user = new User();
+		user.setUserId("AB");
+		user.setMobileNo("1234567890");
+		user.setEmailId("aa@gmail.com");
+		
+		when(userSvc.getUser("AB")).thenReturn(user);
 
-		mockMvc.perform(get("/getUser/{userId}", "NU")).andExpect(status().isOk()).andExpect(view().name("updateUser"))
+		mockMvc.perform(get("/getUser/{userId}", "AB")).andExpect(status().isOk()).andExpect(view().name("add_edit_user"))
 				.andExpect(model().attribute("userUpdateForm", hasProperty("mobileNo", is("1234567890"))))
 				.andExpect(model().attribute("userUpdateForm", hasProperty("emailId", is("aa@gmail.com"))));
-		verifyNoMoreInteractions(userSvc);
+		//verifyNoMoreInteractions(userSvc);
 	}
 
 	@Test
 	@DisplayName("Unit test for deleting specific user")
-	@Order(5)
+	@Order(4)
 	public void deleteUser() throws Exception {
 		mockMvc.perform(post("/deleteUser/{userId}", "NEW4")).andExpect(status().isOk())
 				.andExpect(view().name("users"));
@@ -136,11 +127,10 @@ class SpringWebApplicationTests {
 
 	@Test
 	@DisplayName("Unit test for updating specific user")
-	@Order(6)
+	@Order(5)
 	public void updateUser() throws Exception {
-		mockMvc.perform(post("/updateUser", "NEW3").param("userId", "NEW1").param("password", "Password21")
-				.param("mobileNo", "9876540987")).andExpect(status().isFound())
-				.andExpect(view().name("redirect:/showUsers"));
+		mockMvc.perform(post("/editUser/{userId}", "NEW3").param("userId", "NEW1").param("password", "Password21")
+				.param("mobileNo", "9876540987")).andExpect(status().isOk());
 	}
 
 	// @Disabled -- add this annotation to stop any test method from executing
